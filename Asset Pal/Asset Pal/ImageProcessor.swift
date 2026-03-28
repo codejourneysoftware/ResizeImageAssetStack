@@ -11,6 +11,7 @@ class ImageProcessor: ObservableObject {
     @Published var totalFiles = 0
     @Published var currentFile = 0
     @Published var statusMessage = "Waiting for images..."
+    @Published var selectedDevice: AppStoreDevice = .iphone
     @Published var terminalLogs: [String] = [
         "> TERMINAL BOOT SEQUENCE INITIATED...",
         "> MEMORY CHECK: OK",
@@ -133,7 +134,9 @@ class ImageProcessor: ObservableObject {
                     continue 
                 }
                 
-                for targetSize in AppStoreTargetSizes.sizes {
+                let filteredTargets = AppStoreTargetSizes.sizes.filter { $0.device == self.selectedDevice }
+                
+                for targetSize in filteredTargets {
                     if let resized = self.processAndResize(image: image, target: targetSize) {
                         self.save(image: resized, originalName: file.deletingPathExtension().lastPathComponent, targetName: targetSize.name, outputDir: outputDir)
                     } else {

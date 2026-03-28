@@ -59,6 +59,38 @@ struct ContentView: View {
                 .background(Color.black)
                 .border(Color.green, width: 1)
                 
+                // Target Toggle Selector
+                HStack(spacing: 0) {
+                    Text("> SET TARGET:")
+                        .font(.system(.body, design: .monospaced).weight(.bold))
+                        .foregroundColor(.green)
+                        .padding(.trailing, 16)
+                    
+                    ForEach(AppStoreDevice.allCases) { device in
+                        let isActive = imageProcessor.selectedDevice == device
+                        Button(action: {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                imageProcessor.selectedDevice = device
+                            }
+                        }) {
+                            Text(isActive ? "[ \(device.rawValue) ]" : "  \(device.rawValue)  ")
+                                .font(.system(.body, design: .monospaced).weight(.bold))
+                                .foregroundColor(isActive ? .black : .green)
+                                .padding(.vertical, 6)
+                                .padding(.horizontal, 12)
+                                .background(isActive ? Color.green : Color.clear)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .disabled(imageProcessor.isProcessing)
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(Color.black)
+                .border(Color.green, width: 1)
+                
                 // Terminal / Drop Zone
                 ZStack {
                     if isDropTargeted {
@@ -111,14 +143,17 @@ struct ContentView: View {
                 
                 // Sub-section dynamically showing supported output sizes
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("TARGET SPECIFICATIONS MODULE")
+                    Text("ACTIVE TARGET SPECIFICATIONS")
                         .font(.system(.headline, design: .monospaced))
                         .foregroundColor(.green)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(alignment: .bottom, spacing: 24) {
-                            ForEach(AppStoreTargetSizes.sizes) { size in
-                                SizeGraphicView(size: size)
+                        HStack(alignment: .bottom, spacing: 32) {
+                            ForEach(AppStoreTargetSizes.sizes.filter { $0.device == imageProcessor.selectedDevice }) { size in
+                                HStack(alignment: .bottom, spacing: 16) {
+                                    SizeGraphicView(size: size, isLandscape: false)
+                                    SizeGraphicView(size: size, isLandscape: true)
+                                }
                             }
                         }
                         .padding(.horizontal, 4)
@@ -137,11 +172,15 @@ struct ContentView: View {
 // Visual graphic representing portrait w x h
 struct SizeGraphicView: View {
     let size: AppStoreSize
+    var isLandscape: Bool = false
     
     var body: some View {
         VStack(spacing: 12) {
-            let w = size.portraitSize.width / 35
-            let h = size.portraitSize.height / 35
+            let actualWidth = isLandscape ? size.portraitSize.height : size.portraitSize.width
+            let actualHeight = isLandscape ? size.portraitSize.width : size.portraitSize.height
+            
+            let w = actualWidth / 35
+            let h = actualHeight / 35
             
             ZStack {
                 Rectangle()
@@ -152,21 +191,31 @@ struct SizeGraphicView: View {
                     .strokeBorder(Color.green, lineWidth: 1.5)
                     .frame(width: w, height: h)
                 
-                VStack(spacing: 4) {
-                    Text("\(Int(size.portraitSize.width))")
-                    Text("x")
-                        .foregroundColor(.green.opacity(0.6))
-                    Text("\(Int(size.portraitSize.height))")
+                if isLandscape {
+                    HStack(spacing: 2) {
+                        Text("\(Int(actualWidth))")
+                        Text("x").foregroundColor(.green.opacity(0.6))
+                        Text("\(Int(actualHeight))")
+                    }
+                    .font(.system(size: 8, weight: .bold, design: .monospaced))
+                    .foregroundColor(.green)
+                } else {
+                    VStack(spacing: 4) {
+                        Text("\(Int(actualWidth))")
+                        Text("x").foregroundColor(.green.opacity(0.6))
+                        Text("\(Int(actualHeight))")
+                    }
+                    .font(.system(size: 8, weight: .bold, design: .monospaced))
+                    .foregroundColor(.green)
+                    .rotationEffect(.degrees(-90))
                 }
-                .font(.system(size: 8, weight: .bold, design: .monospaced))
-                .foregroundColor(.green)
-                .rotationEffect(.degrees(-90))
             }
             .shadow(color: Color.green.opacity(0.2), radius: 5, x: 0, y: 0)
             
             Text(size.name.uppercased().replacingOccurrences(of: "_", with: " "))
                 .font(.system(.caption2, design: .monospaced).weight(.bold))
                 .foregroundColor(.green)
+                .opacity(isLandscape ? 0.6 : 1.0)
                 .multilineTextAlignment(.center)
         }
     }

@@ -1,0 +1,263 @@
+import SwiftUI
+import AppKit
+import CoreImage
+import CoreImage.CIFilterBuiltins
+import UniformTypeIdentifiers
+import Combine
+
+class ImageProcessor: ObservableObject {
+    @Published var isProcessing = false
+    @Published var progress: Double = 0.0
+    @Published var totalFiles = 0
+    @Published var currentFile = 0
+    @Published var statusMessage = "Waiting for images..."
+    @Published var terminalLogs: [String] = [
+        "> TERMINAL BOOT SEQUENCE INITIATED...",
+        "> MEMORY CHECK: OK",
+        "> MAINFRAME ONLINE.",
+        "> AWAITING ASSET DROP..."
+    ]
+    
+    func appendLog(_ message: String) {
+        DispatchQueue.main.async {
+            self.terminalLogs.append("> \(message)")
+        }
+    }
+    
+    func clearLogs() {
+        DispatchQueue.main.async {
+            self.terminalLogs = [
+                "> LOGS PURGED.",
+                "> MAINFRAME READY.",
+                "> AWAITING ASSET DROP..."
+            ]
+        }
+    }
+    
+    let context = CIContext(options: nil)
+
+    func processURLs(_ urls: [URL]) {
+        DispatchQueue.main.async {
+            self.isProcessing = true
+            self.statusMessage = "Analyzing items..."
+            self.appendLog("ANALYZING DROPPED ITEMS...")
+        }
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            var imageFiles: [URL] = []
+            
+            for url in urls {
+                // If it's a directory, enumerate it
+                var isDirectory: ObjCBool = false
+                if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory), isDirectory.boolValue {
+                    let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: [.contentTypeKey], options: [.skipsHiddenFiles])
+                    while let fileURL = enumerator?.nextObject() as? URL {
+                        if self.isImage(url: fileURL) {
+                            imageFiles.append(fileURL)
+                        }
+                    }
+                } else if self.isImage(url: url) {
+                    imageFiles.append(url)
+                }
+            }
+            
+            if imageFiles.isEmpty {
+                DispatchQueue.main.async {
+                    self.statusMessage = "No images found."
+                    self.appendLog("ERROR: NO VALID IMAGE FORMATS DETECTED IN DROP.")
+                    self.isProcessing = false
+                }
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.totalFiles = imageFiles.count
+                self.currentFile = 0
+                self.statusMessage = "Select save location..."
+                self.appendLog("FOUND \(self.totalFiles) VALID TARGET(S).")
+                self.appendLog("AWAITING OUTPUT DIRECTORY SELECTION...")
+            }
+            
+            // Ask for save folder on Main thread
+            DispatchQueue.main.async {
+                let panel = NSOpenPanel()
+                panel.title = "Select Output Folder"
+                panel.canChooseFiles = false
+                panel.canChooseDirectories = true
+                panel.canCreateDirectories = true
+                panel.prompt = "Save Here"
+                
+                panel.begin { response in
+                    if response == .OK, let outputURL = panel.url {
+                        self.appendLog("DIRECTORY AQUIRED: \(outputURL.lastPathComponent)")
+                        self.startProcessing(imageFiles: imageFiles, outputDir: outputURL)
+                    } else {
+                        // User cancelled
+                        self.isProcessing = false
+                        self.statusMessage = "Cancelled"
+                        self.appendLog("OPERATION ABORTED BY USER.")
+                    }
+                }
+            }
+        }
+    }
+    
+    private func isImage(url: URL) -> Bool {
+        if let type = try? url.resourceValues(forKeys: [.contentTypeKey]).contentType {
+            return type.conforms(to: .image)
+        }
+        let ext = url.pathExtension.lowercased()
+        return ["png", "jpg", "jpeg"].contains(ext)
+    }
+    
+    private func startProcessing(imageFiles: [URL], outputDir: URL) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            // Request system permission to write outside the App Sandbox on this background thread
+            let hasAccess = outputDir.startAccessingSecurityScopedResource()
+            defer {
+                if hasAccess {
+                    outputDir.stopAccessingSecurityScopedResource()
+                }
+            }
+            
+            for (index, file) in imageFiles.enumerated() {
+                DispatchQueue.main.async {
+                    self.statusMessage = "Processing \(file.lastPathComponent)..."
+                    self.appendLog("PROCESSING [\(index + 1)/\(self.totalFiles)]: \(file.lastPathComponent)")
+                    self.currentFile = index + 1
+                    self.progress = Double(self.currentFile) / Double(self.totalFiles)
+                }
+                
+                guard let image = NSImage(contentsOf: file) else { 
+                    self.appendLog("ERROR: Could not read image data from \(file.lastPathComponent).")
+                    continue 
+                }
+                
+                for targetSize in AppStoreTargetSizes.sizes {
+                    if let resized = self.processAndResize(image: image, target: targetSize) {
+                        self.save(image: resized, originalName: file.deletingPathExtension().lastPathComponent, targetName: targetSize.name, outputDir: outputDir)
+                    } else {
+                        self.appendLog("ERROR: Engine failed to resize \(file.lastPathComponent) to \(targetSize.name).")
+                    }
+                }
+            }
+            
+            DispatchQueue.main.async {
+                self.statusMessage = "Done! Processed \(self.totalFiles) image(s)."
+                self.appendLog("PROCESS COMPLETE. \(self.totalFiles) TARGET(S) SUCCESSFULLY EXPORTED.")
+                self.isProcessing = false
+                self.progress = 1.0
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    if !self.isProcessing {
+                        self.statusMessage = "Ready."
+                        self.progress = 0.0
+                        self.appendLog("AWAITING NEXT ASSIGNMENT...")
+                    }
+                }
+            }
+        }
+    }
+    
+    private func processAndResize(image: NSImage, target: AppStoreSize) -> NSImage? {
+        // Detect landscape vs portrait
+        let isLandscape = image.size.width > image.size.height
+        let targetDimensions = isLandscape ? CGSize(width: target.portraitSize.height, height: target.portraitSize.width) : target.portraitSize
+        
+        let outputRect = CGRect(origin: .zero, size: targetDimensions)
+        
+        // Setup drawing
+        guard let customImageRep = NSBitmapImageRep(bitmapDataPlanes: nil,
+                                                    pixelsWide: Int(targetDimensions.width),
+                                                    pixelsHigh: Int(targetDimensions.height),
+                                                    bitsPerSample: 8,
+                                                    samplesPerPixel: 4,
+                                                    hasAlpha: true,
+                                                    isPlanar: false,
+                                                    colorSpaceName: .calibratedRGB,
+                                                    bytesPerRow: 0,
+                                                    bitsPerPixel: 0) else { return nil }
+        
+        NSGraphicsContext.saveGraphicsState()
+        guard let context = NSGraphicsContext(bitmapImageRep: customImageRep) else { return nil }
+        NSGraphicsContext.current = context
+        
+        // Background color padding or blur. Let's do a blur fill of the original image, followed by a dark tint to make it pop.
+        if let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) {
+            let ciImage = CIImage(cgImage: cgImage)
+            let blurFilter = CIFilter.gaussianBlur()
+            blurFilter.inputImage = ciImage
+            // Huge blur for background
+            let minDimension = min(targetDimensions.width, targetDimensions.height)
+            blurFilter.radius = Float(minDimension * 0.05) 
+            
+            if let blurredCI = blurFilter.outputImage, let blurredCG = self.context.createCGImage(blurredCI, from: blurredCI.extent) {
+                let blurredNS = NSImage(cgImage: blurredCG, size: image.size)
+                
+                // Scale to fill
+                let aspectFillRatio = max(targetDimensions.width / image.size.width, targetDimensions.height / image.size.height)
+                let fillSize = CGSize(width: image.size.width * aspectFillRatio, height: image.size.height * aspectFillRatio)
+                let fillRect = CGRect(x: (targetDimensions.width - fillSize.width) / 2.0,
+                                      y: (targetDimensions.height - fillSize.height) / 2.0,
+                                      width: fillSize.width,
+                                      height: fillSize.height)
+                
+                blurredNS.draw(in: fillRect)
+                
+                // Add a black tint for contrast
+                NSColor(white: 0, alpha: 0.3).setFill()
+                outputRect.fill(using: .sourceAtop)
+            } else {
+                // Fallback to solid color
+                NSColor.darkGray.setFill()
+                outputRect.fill()
+            }
+        }
+        
+        // Foreground image scaled to fit
+        let aspectFitRatio = min(targetDimensions.width / image.size.width, targetDimensions.height / image.size.height)
+        let fitSize = CGSize(width: image.size.width * aspectFitRatio, height: image.size.height * aspectFitRatio)
+        let fitRect = CGRect(x: (targetDimensions.width - fitSize.width) / 2.0,
+                             y: (targetDimensions.height - fitSize.height) / 2.0,
+                             width: fitSize.width,
+                             height: fitSize.height)
+        
+        image.draw(in: fitRect)
+        
+        NSGraphicsContext.restoreGraphicsState()
+        
+        let finalImage = NSImage(size: targetDimensions)
+        finalImage.addRepresentation(customImageRep)
+        return finalImage
+    }
+    
+    private func save(image: NSImage, originalName: String, targetName: String, outputDir: URL) {
+        guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { 
+            self.appendLog("ERROR: CGImage generation failed for \(targetName).")
+            return 
+        }
+        
+        let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
+        guard let pngData = bitmapRep.representation(using: .png, properties: [:]) else { 
+            self.appendLog("ERROR: PNG data compression failed for \(targetName).")
+            return 
+        }
+        
+        let folderURL = outputDir.appendingPathComponent(targetName, isDirectory: true)
+        
+        do {
+            try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+        } catch {
+            self.appendLog("FS ERROR: Could not create folder at \(folderURL.path). \(error.localizedDescription)")
+            return
+        }
+        
+        let fileURL = folderURL.appendingPathComponent("\(originalName)_AppStore.png")
+        
+        do {
+            try pngData.write(to: fileURL)
+            self.appendLog("    [✓] \(targetName) successfully written.")
+        } catch {
+            self.appendLog("FS ERROR: Write failed for \(fileURL.lastPathComponent). \(error.localizedDescription)")
+        }
+    }
+}

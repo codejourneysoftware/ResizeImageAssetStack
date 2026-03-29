@@ -162,9 +162,7 @@ class ImageProcessor: ObservableObject {
     }
     
     private func processAndResize(image: NSImage, target: AppStoreSize) -> NSImage? {
-        // Detect landscape vs portrait
-        let isLandscape = image.size.width > image.size.height
-        let targetDimensions = isLandscape ? CGSize(width: target.portraitSize.height, height: target.portraitSize.width) : target.portraitSize
+        let targetDimensions = target.size
         
         let outputRect = CGRect(origin: .zero, size: targetDimensions)
         

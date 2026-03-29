@@ -148,12 +148,9 @@ struct ContentView: View {
                         .foregroundColor(.green)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(alignment: .bottom, spacing: 32) {
+                        HStack(alignment: .bottom, spacing: 24) {
                             ForEach(AppStoreTargetSizes.sizes.filter { $0.device == imageProcessor.selectedDevice }) { size in
-                                HStack(alignment: .bottom, spacing: 16) {
-                                    SizeGraphicView(size: size, isLandscape: false)
-                                    SizeGraphicView(size: size, isLandscape: true)
-                                }
+                                SizeGraphicView(size: size)
                             }
                         }
                         .padding(.horizontal, 4)
@@ -172,12 +169,12 @@ struct ContentView: View {
 // Visual graphic representing portrait w x h
 struct SizeGraphicView: View {
     let size: AppStoreSize
-    var isLandscape: Bool = false
     
     var body: some View {
         VStack(spacing: 12) {
-            let actualWidth = isLandscape ? size.portraitSize.height : size.portraitSize.width
-            let actualHeight = isLandscape ? size.portraitSize.width : size.portraitSize.height
+            let actualWidth = size.size.width
+            let actualHeight = size.size.height
+            let isLandscape = actualWidth > actualHeight
             
             let w = actualWidth / 35
             let h = actualHeight / 35

@@ -3,11 +3,11 @@
   <img src="https://img.shields.io/badge/Swift-5.0+-orange?style=for-the-badge&logo=swift" alt="Swift Version">
 </p>
 
-# Asset Pal // Mainframe V1.0
+# Resize Image Asset Stack // Mainframe V1.0
 
 A retro-styled, high-performance macOS utility built specifically to automate the most annoying part of iOS development: prepping and padding **App Store screenshots**. 
 
-Asset Pal features a sleek, purely `monospaced` CRT terminal aesthetic that auto-scrolls and logs commands as it processes your assets in the background.
+Resize Image Asset Stack features a sleek, purely `monospaced` CRT terminal aesthetic that auto-scrolls and logs commands as it processes your assets in the background.
 
 ## 🖲️ Features
 

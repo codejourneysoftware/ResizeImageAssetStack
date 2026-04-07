@@ -1,6 +1,6 @@
-# 🤝 Contributing to Asset Pal
+# 🤝 Contributing to Resize Image Asset Stack
 
-First off, thank you for considering contributing to Asset Pal! It's people like you that make Asset Pal such a great tool. 
+First off, thank you for considering contributing to Resize Image Asset Stack! It's people like you that make Resize Image Asset Stack such a great tool. 
 
 Whether you're fixing bugs, adding new export sizes, or sneaking fun Easter eggs into the terminal logs, all contributions are highly appreciated!
 

@@ -16,6 +16,7 @@ Resize Image Asset Stack features a sleek, purely `monospaced` CRT terminal aest
 - **Strict Size Generation:** Outputs exact, pixel-perfect image dimensions strictly adhering to Apple's App Store Connect rules without breaking UI scaling limits, including:
   - `6.5-inch` iPhone (1242 × 2688px)
   - `6.7-inch` iPhone (1284 × 2778px)
+  - `iPhone Duo` (1398 × 2034px, 2034 × 1398px, 2007 × 2853px, 2853 × 2007px)
   - `12.9-inch` iPad (2048 × 2732px)
   - `13-inch` iPad (2064 × 2752px)
   - App Store **Header & Search Results** Creative Assets (`5244 × 2950px`, `3840 × 1646px`, `3840 × 2560px`, `1920 × 1280px`)

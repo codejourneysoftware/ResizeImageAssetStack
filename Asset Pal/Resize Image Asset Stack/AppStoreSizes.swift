@@ -3,6 +3,7 @@ import CoreGraphics
 
 enum AppStoreDevice: String, CaseIterable, Identifiable {
     case iphone = "IPHONE"
+    case iphoneDuo = "IPHONE DUO"
     case ipad = "IPAD"
     case mac = "MAC"
     case tv = "APPLE TV"
@@ -24,6 +25,11 @@ struct AppStoreTargetSizes {
         AppStoreSize(name: "iPhone 6.5in (2688x1242)", device: .iphone, size: CGSize(width: 2688, height: 1242)),
         AppStoreSize(name: "iPhone 6.7in (1284x2778)", device: .iphone, size: CGSize(width: 1284, height: 2778)),
         AppStoreSize(name: "iPhone 6.7in (2778x1284)", device: .iphone, size: CGSize(width: 2778, height: 1284)),
+        
+        AppStoreSize(name: "iPhone Duo (1398x2034)", device: .iphoneDuo, size: CGSize(width: 1398, height: 2034)),
+        AppStoreSize(name: "iPhone Duo (2034x1398)", device: .iphoneDuo, size: CGSize(width: 2034, height: 1398)),
+        AppStoreSize(name: "iPhone Duo (2007x2853)", device: .iphoneDuo, size: CGSize(width: 2007, height: 2853)),
+        AppStoreSize(name: "iPhone Duo (2853x2007)", device: .iphoneDuo, size: CGSize(width: 2853, height: 2007)),
         
         AppStoreSize(name: "iPad 13in (2064x2752)", device: .ipad, size: CGSize(width: 2064, height: 2752)),
         AppStoreSize(name: "iPad 13in (2752x2064)", device: .ipad, size: CGSize(width: 2752, height: 2064)),

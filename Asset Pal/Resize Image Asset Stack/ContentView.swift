@@ -85,26 +85,31 @@ struct ContentView: View {
                         .font(.system(.body, design: .monospaced).weight(.bold))
                         .foregroundColor(.green)
                         .padding(.trailing, 16)
+                        .fixedSize()
                     
-                    ForEach(AppStoreDevice.allCases) { device in
-                        let isActive = imageProcessor.selectedDevice == device
-                        Button(action: {
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                imageProcessor.selectedDevice = device
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 0) {
+                            ForEach(AppStoreDevice.allCases) { device in
+                                let isActive = imageProcessor.selectedDevice == device
+                                Button(action: {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        imageProcessor.selectedDevice = device
+                                    }
+                                }) {
+                                    Text(isActive ? "[ \(device.rawValue) ]" : "  \(device.rawValue)  ")
+                                        .font(.system(.body, design: .monospaced).weight(.bold))
+                                        .foregroundColor(isActive ? .black : .green)
+                                        .padding(.vertical, 6)
+                                        .padding(.horizontal, 12)
+                                        .background(isActive ? Color.green : Color.clear)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .disabled(imageProcessor.isProcessing)
                             }
-                        }) {
-                            Text(isActive ? "[ \(device.rawValue) ]" : "  \(device.rawValue)  ")
-                                .font(.system(.body, design: .monospaced).weight(.bold))
-                                .foregroundColor(isActive ? .black : .green)
-                                .padding(.vertical, 6)
-                                .padding(.horizontal, 12)
-                                .background(isActive ? Color.green : Color.clear)
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .disabled(imageProcessor.isProcessing)
                     }
                     
-                    Spacer()
+                    Spacer(minLength: 0)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)

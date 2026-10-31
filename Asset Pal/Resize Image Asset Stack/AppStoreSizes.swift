@@ -6,6 +6,7 @@ enum AppStoreDevice: String, CaseIterable, Identifiable {
     case ipad = "IPAD"
     case mac = "MAC"
     case tv = "APPLE TV"
+    case banners = "BANNERS"
     case android = "ANDROID"
     var id: String { rawValue }
 }
@@ -36,6 +37,11 @@ struct AppStoreTargetSizes {
         
         AppStoreSize(name: "Apple TV 1080p (1920x1080)", device: .tv, size: CGSize(width: 1920, height: 1080)),
         AppStoreSize(name: "Apple TV 4K (3840x2160)", device: .tv, size: CGSize(width: 3840, height: 2160)),
+        
+        AppStoreSize(name: "Header & Search (5244x2950)", device: .banners, size: CGSize(width: 5244, height: 2950)),
+        AppStoreSize(name: "Header (3840x1646)", device: .banners, size: CGSize(width: 3840, height: 1646)),
+        AppStoreSize(name: "Search Results (3840x2560)", device: .banners, size: CGSize(width: 3840, height: 2560)),
+        AppStoreSize(name: "Search Results (1920x1280)", device: .banners, size: CGSize(width: 1920, height: 1280)),
         
         AppStoreSize(name: "Android Phone (1080x1920)", device: .android, size: CGSize(width: 1080, height: 1920)),
         AppStoreSize(name: "Android Phone (1920x1080)", device: .android, size: CGSize(width: 1920, height: 1080)),

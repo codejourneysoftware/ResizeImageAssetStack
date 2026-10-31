@@ -18,6 +18,7 @@ Resize Image Asset Stack features a sleek, purely `monospaced` CRT terminal aest
   - `6.7-inch` iPhone (1284 × 2778px)
   - `12.9-inch` iPad (2048 × 2732px)
   - `13-inch` iPad (2064 × 2752px)
+  - App Store **Header & Search Results** Creative Assets (`5244 × 2950px`, `3840 × 1646px`, `3840 × 2560px`, `1920 × 1280px`)
 - **Zero-Friction Terminal UI:** Watch the background logic unfold in gorgeous, neon-green retro console output instead of standard loading bars.
 
 ## 🚀 How to Use

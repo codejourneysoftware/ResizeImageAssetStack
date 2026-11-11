@@ -1,6 +1,6 @@
-# Project Command Reference & Execution Log
+# Getting Started & Project Reference
 
-This document provides a complete record of the commands and workflows used to rewrite the macOS Swift codebase into **Tauri 2.0 + React 19 + TypeScript + Vite 6**, deploy the changes to GitHub, switch the repository visibility to public, and launch the application.
+This document provides a complete guide and record of the workflows and commands used to develop, build, and run the **Tauri 2.0 + React 19 + TypeScript + Vite 6** codebase, as well as deployment and repository management.
 
 All machine-specific paths and private credentials have been redacted to maintain open-source privacy standards.
 

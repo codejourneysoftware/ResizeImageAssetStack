@@ -43,6 +43,8 @@ Resize Image Asset Stack features a sleek, purely `monospaced` CRT terminal aest
 
 ## 🚀 Getting Started
 
+For an in-depth command reference and architecture workflow, see [GETTING_STARTED.md](GETTING_STARTED.md).
+
 ### Prerequisites
 - [Node.js](https://nodejs.org/) (v18+)
 - [Rust & Cargo](https://www.rust-lang.org/tools/install) (required for building the desktop Tauri binary; optional for web dev)
@@ -50,8 +52,8 @@ Resize Image Asset Stack features a sleek, purely `monospaced` CRT terminal aest
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/ImageResizeAssetStack.git
-cd ImageResizeAssetStack
+git clone https://github.com/codejourneysoftware/ResizeImageAssetStack.git
+cd ResizeImageAssetStack
 
 # Install dependencies
 npm install

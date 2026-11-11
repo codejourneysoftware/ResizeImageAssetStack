@@ -1,34 +1,42 @@
 # 🤝 Contributing to Resize Image Asset Stack
 
-First off, thank you for considering contributing to Resize Image Asset Stack! It's people like you that make Resize Image Asset Stack such a great tool. 
-
-Whether you're fixing bugs, adding new export sizes, or sneaking fun Easter eggs into the terminal logs, all contributions are highly appreciated!
-
-## 🛠️ How to Contribute
-
-We use the standard GitHub Pull Request (PR) workflow:
-
-1. **Fork the repository** to your own GitHub account.
-2. **Clone the project** to your machine.
-3. **Create a branch** locally with a descriptive name (`git checkout -b feature/add-android-sizes`).
-4. **Make your changes** in Xcode.
-5. **Commit your changes** with a clear commit message.
-6. **Push your branch** to your fork (`git push origin feature/add-android-sizes`).
-7. **Open a Pull Request** in our original repository!
+First off, thank you for considering contributing to **Resize Image Asset Stack**! It is community contributions that keep this tool fast, cross-platform, and up to date with evolving App Store and Google Play specifications.
 
 ---
 
-## 🎯 What to Work On
+## 🛠️ How to Contribute
 
-If you're looking for something to do, check out the **Issues** tab on GitHub! We regularly tag beginner-friendly tasks with the label `good first issue` or `help wanted`.
+We follow standard GitHub Pull Request (PR) workflow:
 
-**Current Wishlist Features:**
-- 🤖 Adding Android / Google Play Store target dimensions.
-- 🎨 Allowing users to change the terminal text color (Amber, Cyan, White).
-- 🖱️ Support for dragging and dropping directly from the macOS Photos app.
+1. **Fork the repository** to your own GitHub account.
+2. **Clone the project** locally:
+   ```bash
+   git clone https://github.com/your-username/ImageResizeAssetStack.git
+   cd ImageResizeAssetStack
+   ```
+3. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+4. **Create a feature branch** locally:
+   ```bash
+   git checkout -b feature/add-new-target-spec
+   ```
+5. **Make and test your changes**:
+   - Run `npm run dev` to test in web preview.
+   - Run `npm run tauri dev` to test in desktop Tauri environment.
+   - Verify that `npm run build` succeeds cleanly.
+6. **Commit your changes** with descriptive commit messages.
+7. **Push to your fork** and open a Pull Request!
 
-### Code Style Guidelines
-- Please keep all UI components strictly `.monospaced` to maintain the CRT terminal aesthetic!
-- If you add a new `AppStoreSize`, make sure it strictly mathematically adheres exactly to Apple's unscaled resolution guidelines.
+---
 
-We look forward to reviewing your PRs!
+## 🎯 Contribution Areas & Guidelines
+
+- **New Resolutions / Platforms:** When adding new screen sizes to `src/types/sizes.ts`, ensure they strictly adhere to official unscaled resolution guidelines from Apple or Google Play.
+- **CRT Aesthetic:** All UI typography must remain strictly monospaced to preserve the retro CRT mainframe feel.
+- **Cross-Platform Compatibility:** Ensure features work seamlessly both inside the Tauri desktop shell and in the browser preview.
+- **Privacy & Security:** Never commit personal API keys, machine paths, or private credentials.
+
+Thank you for helping make app store asset generation frictionless!
+

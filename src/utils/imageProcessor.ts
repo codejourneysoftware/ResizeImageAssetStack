@@ -42,7 +42,7 @@ export function loadImage(source: File | string): Promise<HTMLImageElement> {
 }
 
 /**
- * Replicates the exact image processing pipeline from ImageProcessor.swift:
+ * Image processing pipeline:
  * 1. Fills background with solid black (#000000).
  * 2. Scales image with Aspect Fill + bleed, applies Gaussian blur (5% of min dimension) + 0.2 alpha black tint.
  * 3. Draws foreground image using Smart-Fill (Fill if aspect ratio matches within 0.005, else Fit).

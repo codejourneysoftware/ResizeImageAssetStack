@@ -1,141 +1,115 @@
-# Getting Started & Project Reference
+# Getting Started & Developer Guide
 
-This document provides a complete guide and record of the workflows and commands used to develop, build, and run the **Tauri 2.0 + React 19 + TypeScript + Vite 6** codebase, as well as deployment and repository management.
-
-All machine-specific paths and private credentials have been redacted to maintain open-source privacy standards.
+Welcome to **Resize Image Asset Stack // Mainframe V1.0** — a high-performance, cross-platform utility built with **Tauri 2.0 + React 19 + TypeScript + Vite 6** designed to automate formatting, padding, and resizing screenshots for Apple App Store and Google Play Store submissions.
 
 ---
 
-## 1. Project Scaffolding & Dependencies
+## 🛠️ Prerequisites
 
-### Scaffold Tauri 2.0 App with React + TypeScript Template
-Initializes the cross-platform project structure with Vite and React:
+Before building and running the project, ensure you have the following installed on your workstation:
+
+- **Node.js:** v18.0.0 or later (v20+ recommended)
+- **npm:** v9.0.0 or later
+- **Rust & Cargo:** (Required for running/building the native desktop app via Tauri)
+  - [Install Rust via rustup](https://www.rust-lang.org/tools/install)
+  - Standard C++ build tools for your platform (e.g. Visual Studio Build Tools on Windows, Xcode CLI tools on macOS)
+
+> **Note:** You can run and test the web version (`npm run dev`) immediately using just Node.js and npm without having Rust installed.
+
+---
+
+## 🚀 Quick Start
+
+### 1. Clone the Repository
 ```bash
-npx create-tauri-app . --template react-ts --manager npm --yes
+git clone https://github.com/codejourneysoftware/ResizeImageAssetStack.git
+cd ResizeImageAssetStack
 ```
 
-### Install Core & Helper Packages
-Installs frontend icons and ZIP compression (for web export fallback):
+### 2. Install Dependencies
 ```bash
 npm install
-npm install jszip lucide-react @types/jszip
-npm install @tauri-apps/plugin-dialog @tauri-apps/plugin-fs
 ```
+
+### 3. Launch Development Server
+```bash
+# Start the web client with instant hot-reload:
+npm run dev
+
+# Or launch the native Tauri desktop application:
+npm run tauri dev
+```
+The web development interface will be live at `http://localhost:1420`.
 
 ---
 
-## 2. Compilation & Build Verification
+## 📦 Building for Production
 
-### Type Checking and Production Bundle
-Runs TypeScript compilation (`tsc`) and Vite asset bundling:
+### Web Production Bundle
+Compile TypeScript and generate an optimized production web build:
 ```bash
 npm run build
 ```
+Output files will be generated into the `dist/` directory.
+
+### Native Desktop Binaries & Installers
+Package native installers (`.exe`/`.msi` on Windows, `.dmg`/`.app` on macOS, `.deb`/`.AppImage` on Linux):
+```bash
+npm run tauri build
+```
+Output binaries will be placed in `src-tauri/target/release/bundle/`.
 
 ---
 
-## 3. Privacy & Open-Source Scrubbing
+## 🗂️ Project Architecture
 
-### Verify Zero Personal Data in Repository
-Recursively scans all project files (excluding `node_modules` and `dist`) to ensure no usernames, personal emails, or machine paths are present:
-```powershell
-Get-ChildItem -Recurse -File -Exclude node_modules,dist | 
-  Where-Object { $_.FullName -notmatch '\\(node_modules|dist)\\' } | 
-  Select-String -Pattern "personal_names_or_usernames"
 ```
-
-### Set Generic Git Author Information (Local Repo Only)
-Ensures that all commits and pushes are strictly attributed to the organization without personal author metadata:
-```bash
-git config --local user.name "codejourneysoftware"
-git config --local user.email "codejourneysoftware@users.noreply.github.com"
-```
-
----
-
-## 4. Replacing Swift Codebase on GitHub
-
-### Initialize Git & Connect Remote
-Initializes the repository and connects to the existing GitHub remote:
-```bash
-git init
-git remote add origin https://github.com/codejourneysoftware/ResizeImageAssetStack.git
-git fetch origin main
-```
-
-### Stage Old Swift Removal & New Tauri Code
-Performs a mixed reset to stage the complete deletion of the legacy Swift `Asset Pal/` directory while keeping all new Tauri + React files:
-```bash
-git branch -m main
-git reset --mixed origin/main
-git add -A
-```
-
-### Commit & Push to Main Branch
-Replaces the GitHub codebase on the `main` branch:
-```bash
-git commit -m "feat: migrate codebase from Swift/macOS to Tauri + React/Vite"
-git push -u origin main
+ImageResizeAssetStack/
+├── public/                 # Static assets, application icons, and favicons
+├── src/                    # Frontend React application
+│   ├── components/         # Reusable UI components (SizeGraphicView, etc.)
+│   ├── types/              # Type definitions and target specifications (sizes.ts)
+│   ├── utils/              # Resizing engine and desktop/web bridge
+│   │   ├── imageProcessor.ts   # Aspect-ratio calculation, blur filter, smart-fill
+│   │   └── tauriBridge.ts      # Native filesystem I/O with web ZIP export fallback
+│   ├── App.css             # Monospaced CRT terminal styling, scanlines, and phosphor glows
+│   ├── App.tsx             # Main mainframe terminal UI, drag-and-drop, log stream
+│   └── main.tsx            # React application entry point
+├── src-tauri/              # Rust desktop backend
+│   ├── capabilities/       # Security permissions (dialog, filesystem, opener)
+│   ├── icons/              # Platform desktop application icons
+│   ├── src/
+│   │   ├── lib.rs          # Native commands (directory selection, disk writing)
+│   │   └── main.rs         # Tauri application bootstrap
+│   ├── Cargo.toml          # Rust dependencies and release profile
+│   └── tauri.conf.json     # Window dimensions, title, and bundle configuration
+├── index.html              # HTML shell
+├── package.json            # Node.js dependencies and scripts
+├── tsconfig.json           # TypeScript configuration
+└── vite.config.ts          # Vite configuration
 ```
 
 ---
 
-## 5. GitHub Repository Visibility Management
+## 🎨 Core Engine Specifications
 
-### Switch Repository Visibility to Public via GitHub API
-Updates the repository to public using the GitHub REST API:
-```powershell
-$headers = @{
-    "Authorization" = "token <GITHUB_TOKEN>"
-    "Accept"        = "application/vnd.github.v3+json"
-    "User-Agent"    = "PowerShell-Script"
-}
+### 1. Smart-Fill Resizing Engine
+- **Safety Black Background:** The base canvas is filled with solid black (`#000000`) to guarantee opaque 24-bit/32-bit PNG output.
+- **Aspect-Fill Gaussian Blur:** Fills the background with an amplified, edge-clamped blur of the original image with bleed padding and a subtle `0.2` opacity black contrast tint.
+- **Smart-Fill:** Images matching within `0.005` of the target aspect ratio are automatically filled to eliminate edge slivers; all other images are fitted centered and crisp against the blurred background.
 
-$body = @{
-    "private" = $false
-} | ConvertTo-Json
-
-Invoke-RestMethod `
-  -Uri "https://api.github.com/repos/codejourneysoftware/ResizeImageAssetStack" `
-  -Method Patch `
-  -Headers $headers `
-  -Body $body `
-  -ContentType "application/json"
-```
-
-### Verify Public Anonymous Access
-Confirms that the repository is now publicly accessible without authentication:
-```powershell
-Invoke-RestMethod `
-  -Uri "https://api.github.com/repos/codejourneysoftware/ResizeImageAssetStack" `
-  -Headers @{ "User-Agent" = "PowerShell-Script" } | 
-  Select-Object name, private, visibility, html_url
-```
+### 2. Dual Export Pipeline
+- **Desktop (Tauri):** Prompts for a local folder and writes assets into structured directories on disk (`[OPEN EXPORT]` reveals the directory in your system file explorer).
+- **Web Browser:** Bundles all generated directories and files into a downloadable structured `.zip` archive using JSZip.
 
 ---
 
-## 6. Launching & Running the Application
+## 🕹️ Command Reference Cheat Sheet
 
-### Start Development Server
-Starts the local development server with Hot Module Reloading (HMR):
-```bash
-npm run dev
-```
-
-### Open the Application in Default Browser
-Launches the running interface:
-```powershell
-Start-Process "http://localhost:1420"
-```
-
----
-
-## 7. Developer Quick Reference
-
-| Action | Command |
+| Task | Command |
 |---|---|
-| **Run Web Dev Server** | `npm run dev` |
-| **Run Native Tauri Desktop App** | `npm run tauri dev` |
-| **Build Web Production Bundle** | `npm run build` |
-| **Package Native Desktop Installers** | `npm run tauri build` |
-| **Preview Production Build** | `npm run preview` |
+| **Start Web Client** | `npm run dev` |
+| **Start Native Desktop App** | `npm run tauri dev` |
+| **Type Check & Build Web** | `npm run build` |
+| **Package Desktop App** | `npm run tauri build` |
+| **Preview Built Web App** | `npm run preview` |

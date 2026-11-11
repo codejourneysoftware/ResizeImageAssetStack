@@ -10,7 +10,7 @@ export const SizeGraphicView: React.FC<SizeGraphicViewProps> = ({ size }) => {
   const actualHeight = size.height;
   const isLandscape = actualWidth > actualHeight;
 
-  // Scale down proportionately (matches Swift factor: width / 35, height / 35)
+  // Scale down proportionately for preview representation
   // Clamp maximum dimension so gigantic banner sizes (5244px) fit comfortably
   const scale = actualWidth > 4000 ? 55 : 35;
   const w = Math.max(30, Math.round(actualWidth / scale));

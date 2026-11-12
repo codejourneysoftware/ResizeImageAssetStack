@@ -32,8 +32,9 @@ Resize Image Asset Stack features a sleek, purely `monospaced` CRT terminal aest
   - **iPad 13-inch:** `2064 × 2752px` & `2752 × 2064px`
   - **Mac Displays:** `1280 × 800px`, `1440 × 900px`, `2560 × 1600px`, `2880 × 1800px`
   - **Apple TV:** `1080p` (`1920 × 1080px`) & `4K` (`3840 × 2160px`)
-  - **App Store Creative & Search Banners:** `5244 × 2950px`, `3840 × 1646px`, `3840 × 2560px`, `1920 × 1280px`
-  - **Android / Google Play:** `1080 × 1920px`, `1920 × 1080px`, `1440 × 2560px`, `2560 × 1440px`, `2160 × 3840px`, `3840 × 2160px`
+  - **Apple Banners & Creatives:** `5244 × 2950px`, `3840 × 1646px`, `3840 × 2560px`, `1920 × 1280px`
+  - **Android Phone Screenshots:** `1080 × 1920px`, `1920 × 1080px`, `1440 × 2560px`, `2560 × 1440px`, `2160 × 3840px`, `3840 × 2160px`
+  - **Android Banners (Google Play):** `Feature Graphic (1024 × 500px)`, `TV Banner (1280 × 720px)`
 - **Zero-Friction Terminal UI:** Watch background crunching unfold in retro monochrome phosphor output, complete with an interactive resolution visualizer row and instant folder export controls.
 - **Dual Export Pipeline:**
   - **Tauri Desktop Mode:** Prompts for native folder selection and writes files directly into structured subdirectories (`[OPEN EXPORT]` opens in your system file explorer).

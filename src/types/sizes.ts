@@ -4,8 +4,9 @@ export type AppStoreDevice =
   | "IPAD"
   | "MAC"
   | "APPLE TV"
-  | "BANNERS"
-  | "ANDROID";
+  | "APPLE BANNERS"
+  | "ANDROID"
+  | "ANDROID BANNERS";
 
 export const APP_STORE_DEVICES: AppStoreDevice[] = [
   "IPHONE",
@@ -13,8 +14,9 @@ export const APP_STORE_DEVICES: AppStoreDevice[] = [
   "IPAD",
   "MAC",
   "APPLE TV",
-  "BANNERS",
+  "APPLE BANNERS",
   "ANDROID",
+  "ANDROID BANNERS",
 ];
 
 export interface AppStoreSize {
@@ -54,18 +56,21 @@ export const APP_STORE_TARGET_SIZES: AppStoreSize[] = [
   { id: "tv-1080", name: "Apple TV 1080p (1920x1080)", device: "APPLE TV", width: 1920, height: 1080 },
   { id: "tv-4k", name: "Apple TV 4K (3840x2160)", device: "APPLE TV", width: 3840, height: 2160 },
 
-  // Banners
-  { id: "banner-header-search", name: "Header & Search (5244x2950)", device: "BANNERS", width: 5244, height: 2950 },
-  { id: "banner-header", name: "Header (3840x1646)", device: "BANNERS", width: 3840, height: 1646 },
-  { id: "banner-search-1", name: "Search Results (3840x2560)", device: "BANNERS", width: 3840, height: 2560 },
-  { id: "banner-search-2", name: "Search Results (1920x1280)", device: "BANNERS", width: 1920, height: 1280 },
+  // Apple Banners
+  { id: "apple-banner-header-search", name: "Header & Search (5244x2950)", device: "APPLE BANNERS", width: 5244, height: 2950 },
+  { id: "apple-banner-header", name: "Header (3840x1646)", device: "APPLE BANNERS", width: 3840, height: 1646 },
+  { id: "apple-banner-search-1", name: "Search Results (3840x2560)", device: "APPLE BANNERS", width: 3840, height: 2560 },
+  { id: "apple-banner-search-2", name: "Search Results (1920x1280)", device: "APPLE BANNERS", width: 1920, height: 1280 },
 
-  // Android
+  // Android Phones
   { id: "android-1080-p", name: "Android Phone (1080x1920)", device: "ANDROID", width: 1080, height: 1920 },
   { id: "android-1080-l", name: "Android Phone (1920x1080)", device: "ANDROID", width: 1920, height: 1080 },
   { id: "android-1440-p", name: "Android Phone (1440x2560)", device: "ANDROID", width: 1440, height: 2560 },
   { id: "android-1440-l", name: "Android Phone (2560x1440)", device: "ANDROID", width: 2560, height: 1440 },
   { id: "android-2160-p", name: "Android Phone (2160x3840)", device: "ANDROID", width: 2160, height: 3840 },
   { id: "android-2160-l", name: "Android Phone (3840x2160)", device: "ANDROID", width: 3840, height: 2160 },
-];
 
+  // Android Banners (Google Play)
+  { id: "android-banner-feature", name: "Feature Graphic (1024x500)", device: "ANDROID BANNERS", width: 1024, height: 500 },
+  { id: "android-banner-tv", name: "TV Banner (1280x720)", device: "ANDROID BANNERS", width: 1280, height: 720 },
+];

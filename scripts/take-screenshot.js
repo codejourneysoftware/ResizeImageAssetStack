@@ -28,3 +28,4 @@ const executablePath = chromePaths.find(p => existsSync(p)) || 'C:\\Program File
   await browser.close();
   console.log('Successfully captured screenshot to docs/screenshot.png');
 })();
+

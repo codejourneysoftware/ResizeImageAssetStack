@@ -16,6 +16,10 @@ A retro-styled, high-performance desktop and web utility built with **Tauri + Re
 
 Resize Image Asset Stack features a sleek, purely `monospaced` CRT terminal aesthetic with live phosphor green console logs, reactive target visualizers, and an intelligent aspect-fill background blur engine.
 
+<p align="center">
+  <img src="docs/screenshot.png" alt="Resize Image Asset Stack Mainframe Screenshot" width="850" />
+</p>
+
 ---
 
 ## 🖲️ Features

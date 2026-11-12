@@ -2,6 +2,10 @@
 
 First off, thank you for considering contributing to **Resize Image Asset Stack**! It is community contributions that keep this tool fast, cross-platform, and up to date with evolving App Store and Google Play specifications.
 
+<p align="center">
+  <img src="docs/screenshot.png" alt="Resize Image Asset Stack Interface" width="800" />
+</p>
+
 ---
 
 ## 🛠️ How to Contribute
